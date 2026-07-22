@@ -99,14 +99,15 @@ function layout(content) {
     </button>
     <nav class="bottom-nav" aria-label="Navegação principal">
       ${navButton('home', '⌂', 'Início')}
-      ${navButton('new', '+', 'Nova oferta')}
-      ${navButton('offers', '▤', 'Ofertas')}
-      ${navButton('lots', '◎', 'Lotes')}
+      ${navButton('lavoura', '⌁', 'Lavoura')}
+      ${navButton('mercado', '↗', 'Mercado')}
+      ${navButton('comunidade', '●●', 'Comunidade')}
     </nav>`;
 }
 
 function navButton(view, icon, label) {
-  const active = state.view === view;
+  const lavouraViews = ['lavoura', 'new', 'offers', 'lots'];
+  const active = state.view === view || (view === 'lavoura' && lavouraViews.includes(state.view));
   return `<button type="button" data-view="${view}" ${active ? 'aria-current="page"' : ''}><span aria-hidden="true">${icon}</span>${label}</button>`;
 }
 
@@ -129,35 +130,44 @@ function homeView() {
       </div>
     </section>
 
-    <!-- Cards de Acesso Rápido -->
+    <section class="daily-highlight">
+      <div>
+        <p class="eyebrow">Dica para vender melhor</p>
+        <h2>Descreva sua produção do seu jeito</h2>
+        <p>Diga o produto, a quantidade, o local e até quando pode entregar. A SemeIA organiza os campos e você confirma antes de salvar.</p>
+        <button class="button button-sun" type="button" data-view="new">Registrar com a SemeIA <span aria-hidden="true">→</span></button>
+      </div>
+      <img src="/assets/semeia/icons/assistente-ia.png" alt="" />
+    </section>
+
     <section class="quick-grid">
-      <div class="quick-card" data-view="new">
+      <div class="quick-card" data-view="lavoura">
         <div class="quick-card-header">
           <img class="quick-icon" src="/assets/semeia/icons/cultivo.png" alt="" />
           <h3>Minha Lavoura</h3>
         </div>
-        <p>Registre excedentes de colheita rapidamente por texto ou voz.</p>
+        <p>Registre a produção e acompanhe suas ofertas e lotes.</p>
       </div>
-      <div class="quick-card" data-view="lots">
-        <div class="quick-card-header">
-          <img class="quick-icon" src="/assets/semeia/icons/comunidade.png" alt="" />
-          <h3>Lotes Coletivos</h3>
-        </div>
-        <p>Reúna ofertas da mesma comunidade para atender compradores.</p>
-      </div>
-      <div class="quick-card" data-view="offers">
+      <div class="quick-card" data-view="mercado">
         <div class="quick-card-header">
           <img class="quick-icon" src="/assets/semeia/icons/comercializacao.png" alt="" />
-          <h3>Comercialização</h3>
+          <h3>Mercado</h3>
         </div>
-        <p>Consulte e gerencie todos os seus produtos cadastrados localmente.</p>
+        <p>Veja oportunidades demonstrativas e prepare sua venda.</p>
       </div>
-      <div class="quick-card" data-demo>
+      <div class="quick-card" data-view="comunidade">
+        <div class="quick-card-header">
+          <img class="quick-icon" src="/assets/semeia/icons/comunidade.png" alt="" />
+          <h3>Comunidade</h3>
+        </div>
+        <p>Acompanhe trocas e ações coletivas da região.</p>
+      </div>
+      <div class="quick-card" data-view="aprender">
         <div class="quick-card-header">
           <img class="quick-icon" src="/assets/semeia/icons/capacitacao.png" alt="" />
-          <h3>Demonstração</h3>
+          <h3>Capacitação</h3>
         </div>
-        <p>Carregue dados fictícios de teste para apresentar o protótipo.</p>
+        <p>Aprenda a cadastrar e organizar uma oferta clara.</p>
       </div>
     </section>
 
@@ -181,6 +191,85 @@ function homeView() {
         <button class="button button-quiet" type="button" data-demo>Preparar dados de teste</button>
       </article>
     </section>`;
+}
+
+function lavouraView() {
+  const available = state.offers.filter((offer) => offer.status === 'disponivel').length;
+  const lots = groupOffers(state.offers).length;
+  return `
+    <section class="page-intro page-intro-row">
+      <div><p class="eyebrow">Minha produção</p><h1>Minha Lavoura</h1><p>Registre o que colheu, acompanhe suas ofertas e participe de lotes coletivos.</p></div>
+      <button class="button button-primary" type="button" data-view="new">+ Nova oferta</button>
+    </section>
+    <section class="crop-overview">
+      <div><p class="eyebrow">Resumo neste aparelho</p><h2>Sua produção organizada</h2><p>Os dados continuam disponíveis mesmo quando a internet oscila.</p></div>
+      <div class="crop-stats"><span><strong>${available}</strong> ofertas ativas</span><span><strong>${lots}</strong> lotes formados</span></div>
+    </section>
+    <section class="feature-grid">
+      <article class="portal-card"><img src="/assets/semeia/icons/producao.png" alt="" /><div><p class="eyebrow">Produção</p><h2>Cadastrar colheita</h2><p>Fale ou escreva uma oferta e revise os dados sugeridos pela IA.</p></div><button class="button button-primary" type="button" data-view="new">Cadastrar</button></article>
+      <article class="portal-card"><img src="/assets/semeia/icons/cultivo.png" alt="" /><div><p class="eyebrow">No aparelho</p><h2>Minhas ofertas</h2><p>Consulte, edite ou encerre registros salvos localmente.</p></div><button class="button button-secondary" type="button" data-view="offers">Ver ofertas</button></article>
+      <article class="portal-card"><img src="/assets/semeia/icons/comunidade.png" alt="" /><div><p class="eyebrow">Venda coletiva</p><h2>Lotes da comunidade</h2><p>Veja ofertas compatíveis agrupadas por produto, local e semana.</p></div><button class="button button-secondary" type="button" data-view="lots">Ver lotes</button></article>
+      <article class="portal-card portal-card-demo"><img src="/assets/semeia/icons/capacitacao.png" alt="" /><div><p class="eyebrow">Apresentação</p><h2>Preparar demonstração</h2><p>Carregue uma oferta fictícia para demonstrar a formação de um lote.</p></div><button class="button button-quiet" type="button" data-demo>Usar dados fictícios</button></article>
+    </section>`;
+}
+
+function mercadoView() {
+  return `
+    <section class="page-intro"><p class="eyebrow">Mercado e oportunidades</p><h1>Venda com mais organização</h1><p>Esta área demonstra como oportunidades e referências de comercialização poderão aparecer no SemeIA.</p></section>
+    <div class="demo-notice"><strong>Conteúdo demonstrativo</strong><span>Valores e oportunidades abaixo são fictícios e não devem orientar uma venda real.</span></div>
+    <section class="market-opportunity">
+      <img src="/assets/semeia/icons/comercializacao.png" alt="" />
+      <div><p class="eyebrow">Oportunidade da semana</p><h2>Feira da Economia Solidária</h2><p>Sábado, das 7h às 13h · exemplo para apresentação do protótipo.</p></div>
+      <button class="button button-primary" type="button" data-view="offers">Ver o que posso oferecer</button>
+    </section>
+    <div class="section-heading portal-heading"><div><p class="eyebrow">Referências fictícias</p><h2>Produtos da demonstração</h2></div></div>
+    <section class="market-list">
+      ${marketRow('Açaí', 'Lata de 14 kg', 'R$ 92,00', 'comercializacao.png')}
+      ${marketRow('Macaxeira', 'Quilo', 'R$ 4,80', 'producao.png')}
+      ${marketRow('Farinha', 'Quilo', 'R$ 12,80', 'cultivo.png')}
+    </section>
+    <section class="feature-grid compact-feature-grid">
+      <article class="portal-card"><div><p class="eyebrow">Preço justo</p><h2>Organize seus custos</h2><p>Anote produção, transporte, embalagem e tempo de trabalho antes de negociar.</p></div><button class="button button-secondary" type="button" data-view="aprender">Aprender como</button></article>
+      <article class="portal-card"><div><p class="eyebrow">Mais volume</p><h2>Venda em conjunto</h2><p>Confira os lotes coletivos formados com ofertas compatíveis.</p></div><button class="button button-secondary" type="button" data-view="lots">Ver lotes</button></article>
+    </section>`;
+}
+
+function marketRow(product, unit, price, icon) {
+  return `<article class="market-row"><img src="/assets/semeia/icons/${icon}" alt="" /><div><strong>${product}</strong><span>${unit}</span></div><div><strong>${price}</strong><span>valor fictício</span></div></article>`;
+}
+
+function comunidadeView() {
+  return `
+    <section class="page-intro"><p class="eyebrow">Comunidade</p><h1>Ninguém produz sozinho</h1><p>Uma visão demonstrativa das trocas entre famílias produtoras, associações e cooperativas.</p></section>
+    <div class="demo-notice"><strong>Espaço demonstrativo</strong><span>Publicações e eventos são exemplos do protótipo.</span></div>
+    <section class="community-event"><img src="/assets/semeia/icons/comunidade.png" alt="" /><div><p class="eyebrow">Encontro fictício</p><h2>Roda de conversa sobre comercialização</h2><p>Sexta-feira, às 16h · Associação Nova Esperança.</p></div><button class="button button-primary" type="button" data-view="lavoura">Preparar minha oferta</button></section>
+    <section class="community-feed">
+      <article class="community-post"><span class="member-avatar">MR</span><div><strong>Maria Ribeiro</strong><small>Produtora · exemplo</small><p>Tenho macaxeira disponível nesta semana. Quem mais vai entregar na sexta?</p><button class="button button-quiet" type="button" data-view="lots">Conferir lotes</button></div></article>
+      <article class="community-post"><span class="member-avatar member-avatar-green">AP</span><div><strong>Associação do Panorama</strong><small>Cooperativa · exemplo</small><p>Estamos reunindo ofertas para completar o transporte coletivo.</p><button class="button button-quiet" type="button" data-view="offers">Ver minhas ofertas</button></div></article>
+    </section>`;
+}
+
+function aprenderView() {
+  return `
+    <section class="page-intro"><p class="eyebrow">Capacitação</p><h1>Conhecimento que ajuda a vender</h1><p>Conteúdos curtos para usar o SemeIA e organizar melhor suas ofertas.</p></section>
+    <section class="learning-hero"><img src="/assets/semeia/icons/capacitacao.png" alt="" /><div><p class="eyebrow">Guia rápido</p><h2>Como criar uma oferta clara</h2><p>Aprenda quais informações ajudam a IA e os compradores a entender sua produção.</p></div><button class="button button-primary" type="button" data-view="guia">Começar</button></section>
+    <section class="lesson-list">
+      <article><span>01</span><div><strong>Diga o nome do produto</strong><small>Exemplo: macaxeira, açaí ou farinha</small></div></article>
+      <article><span>02</span><div><strong>Informe quantidade e unidade</strong><small>Exemplo: 30 quilos ou 4 caixas</small></div></article>
+      <article><span>03</span><div><strong>Confirme local e prazo</strong><small>Revise tudo antes de salvar no aparelho</small></div></article>
+    </section>`;
+}
+
+function guiaView() {
+  return `
+    <section class="page-intro"><button class="back-link" type="button" data-view="aprender">← Voltar para capacitação</button><p class="eyebrow">Guia em 3 passos</p><h1>Registre uma oferta completa</h1><p>Uma frase simples já é suficiente para começar.</p></section>
+    <section class="guide-example"><span>Exemplo</span><p>“Tenho 30 quilos de macaxeira para entregar até sexta na comunidade Val Paraíso.”</p></section>
+    <section class="guide-steps">
+      <article><span>1</span><div><h2>Fale ou escreva</h2><p>Use palavras do seu dia a dia. Não é preciso preencher tudo de uma vez.</p></div></article>
+      <article><span>2</span><div><h2>Confira a sugestão</h2><p>A SemeIA organiza produto, quantidade, unidade, local e prazo.</p></div></article>
+      <article><span>3</span><div><h2>Confirme antes de salvar</h2><p>Corrija qualquer informação e só então grave a oferta no aparelho.</p></div></article>
+    </section>
+    <button class="button button-primary button-large" type="button" data-view="new">Cadastrar minha oferta</button>`;
 }
 
 function offerFormView() {
@@ -271,7 +360,17 @@ function emptyState(title, text, view) {
 }
 
 function render() {
-  const views = { home: homeView, new: offerFormView, offers: offersView, lots: lotsView };
+  const views = {
+    home: homeView,
+    lavoura: lavouraView,
+    mercado: mercadoView,
+    comunidade: comunidadeView,
+    aprender: aprenderView,
+    guia: guiaView,
+    new: offerFormView,
+    offers: offersView,
+    lots: lotsView,
+  };
   app.innerHTML = layout((views[state.view] ?? homeView)());
   bindEvents();
 }
