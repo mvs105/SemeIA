@@ -22,36 +22,30 @@ Consulte a [visão e os limites](docs/PRODUTO.md), as [histórias de usuário](d
 
 ```text
 frontend/  PWA Vanilla com Vite, Dexie e Workbox
-backend/   API REST Java com Spring Boot e Ollama
+server.js  Servidor Express em Node.js com endpoints da API (/api/v1/interpretacoes) e suporte a Gemini / Ollama / regras
+server/    Interpretador de linguagem natural com fallback resiliente
 docs/      visão, hipóteses, histórias, contrato e roteiro da demonstração
 ```
 
-## Executar a interface
+## Executar a aplicação
 
 Requisitos: Node.js 20 ou superior.
 
 ```bash
-cd frontend
 npm install
 npm run dev
 ```
 
-A interface abre em `http://localhost:5173`. Para testar o comportamento instalável e o cache offline, use `npm run build` e `npm run preview`.
+A aplicação (frontend PWA + backend Node.js) roda na mesma porta (3000) e disponibiliza a API `/api/v1/interpretacoes`.
 
-## Executar a interpretação com Gemma
+## Executar a interpretação de texto
 
-Requisitos: Java 17 ou superior, Maven, Ollama e um modelo Gemma pequeno disponível localmente.
+A API REST local suporta 3 camadas de interpretação resiliente:
+1. **Gemini API** (se `GEMINI_API_KEY` estiver configurado no `.env`);
+2. **Ollama / Gemma local** (se `OLLAMA_BASE_URL` estiver configurado);
+3. **Fallback baseado em regras** (funciona localmente sem serviços externos).
 
-1. Use `backend/.env.example` como referência e defina `OLLAMA_MODEL` e as demais variáveis necessárias no ambiente.
-2. Inicie o Ollama.
-3. Execute:
-
-```bash
-cd backend
-mvn spring-boot:run
-```
-
-A API abre em `http://localhost:8080`. Se ela ou o modelo estiverem indisponíveis, o texto continua na tela e o cadastro manual permanece funcional.
+Se todos os serviços de IA estiverem indisponíveis ou offline, o cadastro manual de ofertas continua 100% funcional.
 
 ## Verificações
 
