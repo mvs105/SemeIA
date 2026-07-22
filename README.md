@@ -21,10 +21,11 @@ Consulte a [visão e os limites](docs/PRODUTO.md), as [histórias de usuário](d
 ## Estrutura
 
 ```text
-frontend/  PWA Vanilla com Vite, Dexie e Workbox
-server.js  Servidor Express em Node.js com endpoints da API (/api/v1/interpretacoes) e suporte a Gemini / Ollama / regras
-server/    Interpretador de linguagem natural com fallback resiliente
-docs/      visão, hipóteses, histórias, contrato e roteiro da demonstração
+frontend/          PWA Vanilla com Vite, Dexie, Workbox e identidade visual oficial
+server.js          Servidor Express e endpoints da API (/api/v1/interpretacoes)
+server/             Interpretador com Gemini, Ollama/Gemma e fallback por regras
+docs/               Visão, histórias, requisitos, contrato e roteiro da demonstração
+semeia-brand-kit/   Especificação e arquivos-fonte da marca
 ```
 
 ## Executar a aplicação
@@ -50,12 +51,8 @@ Se todos os serviços de IA estiverem indisponíveis ou offline, o cadastro manu
 ## Verificações
 
 ```bash
-cd frontend
 npm test
 npm run build
-
-cd ../backend
-mvn test
 ```
 
 O roteiro humano, inclusive o teste com a rede desativada, está em [docs/DEMONSTRACAO.md](docs/DEMONSTRACAO.md).

@@ -17,6 +17,7 @@ const ALLOWED_REQ_FIELDS = new Set(['texto', 'dataReferencia']);
 async function startServer() {
   const app = express();
   const PORT = process.env.PORT || 3000;
+  const isProduction = process.argv.includes('--production') || process.env.NODE_ENV === 'production';
 
   app.use(express.json());
 
@@ -92,9 +93,10 @@ async function startServer() {
   });
 
   // Vite middleware for dev or static files for prod
-  if (process.env.NODE_ENV !== 'production') {
+  if (!isProduction) {
     const vite = await createViteServer({
       root: path.resolve(__dirname, 'frontend'),
+      configFile: path.resolve(__dirname, 'vite.config.js'),
       server: { middlewareMode: true },
       appType: 'spa',
     });

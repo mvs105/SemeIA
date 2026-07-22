@@ -5,18 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server.js",
-    "build": "vite build --outDir dist/client && esbuild server.js --bundle --platform=node --format=esm --packages=external --outfile=dist/server.js",
-    "start": "node dist/server.js",
+    "build": "vite build --outDir ../dist/client --emptyOutDir",
+    "start": "node server.js --production",
     "test": "vitest run",
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@google/genai": "*",
+    "@google/genai": "2.13.0",
     "dexie": "4.4.4",
     "express": "^4.19.2"
   },
   "devDependencies": {
-    "esbuild": "^0.25.0",
     "fake-indexeddb": "6.2.5",
     "jsdom": "29.1.1",
     "tsx": "^4.19.2",

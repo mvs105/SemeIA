@@ -84,8 +84,8 @@ function layout(content) {
       </div>` : ''}
     <header class="app-header">
       <a class="brand" href="#home" data-view="home" aria-label="SemeIA, ir para o início">
-        <span class="brand-icon" aria-hidden="true">🌱</span>
-        <span><strong>SemeIA</strong><small>Agricultura Familiar Amazônica</small></span>
+        <img class="brand-icon" src="/assets/semeia/app-icon.png" alt="" />
+        <span><strong>Seme<span>IA</span></strong><small>Agricultura Familiar Amazônica</small></span>
       </a>
       <span class="connection ${navigator.onLine ? 'is-online' : 'is-offline'}" role="status">${connectionLabel()}</span>
     </header>
@@ -94,7 +94,7 @@ function layout(content) {
       ${content}
     </main>
     <button class="voice-fab ${state.isListening ? 'is-listening' : ''}" type="button" id="voice-fab-btn" aria-label="Falar com a SemeIA por voz">
-      <span class="voice-fab-icon" aria-hidden="true">${state.isListening ? '🎙️' : '🎤'}</span>
+      <img class="voice-fab-icon" src="/assets/semeia/icons/assistente-ia.png" alt="" />
       <span>${state.isListening ? 'Ouvindo…' : 'Falar oferta'}</span>
     </button>
     <nav class="bottom-nav" aria-label="Navegação principal">
@@ -133,28 +133,28 @@ function homeView() {
     <section class="quick-grid">
       <div class="quick-card" data-view="new">
         <div class="quick-card-header">
-          <span class="quick-icon" aria-hidden="true">🌾</span>
+          <img class="quick-icon" src="/assets/semeia/icons/cultivo.png" alt="" />
           <h3>Minha Lavoura</h3>
         </div>
         <p>Registre excedentes de colheita rapidamente por texto ou voz.</p>
       </div>
       <div class="quick-card" data-view="lots">
         <div class="quick-card-header">
-          <span class="quick-icon" aria-hidden="true">📦</span>
+          <img class="quick-icon" src="/assets/semeia/icons/comunidade.png" alt="" />
           <h3>Lotes Coletivos</h3>
         </div>
         <p>Reúna ofertas da mesma comunidade para atender compradores.</p>
       </div>
       <div class="quick-card" data-view="offers">
         <div class="quick-card-header">
-          <span class="quick-icon" aria-hidden="true">🤝</span>
+          <img class="quick-icon" src="/assets/semeia/icons/comercializacao.png" alt="" />
           <h3>Comercialização</h3>
         </div>
         <p>Consulte e gerencie todos os seus produtos cadastrados localmente.</p>
       </div>
       <div class="quick-card" data-demo>
         <div class="quick-card-header">
-          <span class="quick-icon" aria-hidden="true">💡</span>
+          <img class="quick-icon" src="/assets/semeia/icons/capacitacao.png" alt="" />
           <h3>Demonstração</h3>
         </div>
         <p>Carregue dados fictícios de teste para apresentar o protótipo.</p>
@@ -165,7 +165,7 @@ function homeView() {
       <article class="panel">
         <div class="section-heading">
           <div><p class="eyebrow">Aparelho local</p><h2>Perfil do Produtor</h2></div>
-          <span class="soft-icon" aria-hidden="true">👨‍🌾</span>
+          <img class="soft-icon" src="/assets/semeia/icons/producao.png" alt="" />
         </div>
         <form id="profile-form" class="compact-form">
           <label>Seu nome<input name="nome" maxlength="80" value="${escapeHtml(state.profile?.nome)}" placeholder="Ex.: João Silva" required></label>
