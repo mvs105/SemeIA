@@ -39,17 +39,5 @@ export class LocalRepository {
   saveProfile(profile) {
     return this.database.producers.put({ ...profile, id: 'produtor-local' });
   }
-
-  async prepareDemo(offer) {
-    await this.database.transaction('rw', this.database.producers, this.database.offers, async () => {
-      await this.database.producers.put({
-        id: 'produtor-local',
-        nome: 'Rosa Lima',
-        comunidade: 'Comunidade Val Paraíso',
-        contato: '',
-      });
-      await this.database.offers.put(offer);
-    });
-  }
 }
 

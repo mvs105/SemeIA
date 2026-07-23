@@ -25,15 +25,5 @@ describe('repositório local IndexedDB', () => {
     await repository.deleteOffer('oferta-1');
     expect(await repository.listOffers()).toEqual([]);
   });
-
-  it('prepara dados fictícios sem duplicar', async () => {
-    database = createDatabase(`test-${crypto.randomUUID()}`);
-    const repository = new LocalRepository(database);
-    const demo = { id: 'demo', produto: 'Macaxeira', atualizadaEm: '2026-07-22T10:00:00Z' };
-    await repository.prepareDemo(demo);
-    await repository.prepareDemo(demo);
-    expect(await repository.listOffers()).toHaveLength(1);
-    expect((await repository.getProfile()).nome).toBe('Rosa Lima');
-  });
 });
 

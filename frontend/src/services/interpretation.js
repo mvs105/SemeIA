@@ -61,7 +61,7 @@ function localIsoDate(now = new Date()) {
   return `${year}-${month}-${day}`;
 }
 
-export async function interpretOffer(text, { apiUrl = DEFAULT_API_URL, timeoutMs = 10000 } = {}) {
+export async function interpretOffer(text, { apiUrl = DEFAULT_API_URL, timeoutMs = 65000 } = {}) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
   try {

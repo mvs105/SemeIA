@@ -1,5 +1,11 @@
-import { describe, expect, it } from 'vitest';
-import { interpretRuleBasedFallback, parseAndValidateAiResponse } from '../../server/interpreter.js';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { interpretWithOllama, parseAndValidateAiResponse } from '../../server/interpreter.js';
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+  delete process.env.OLLAMA_BASE_URL;
+  delete process.env.OLLAMA_MODEL;
+});
 
 describe('Server interpreter logic', () => {
   it('parses valid AI JSON response', () => {
@@ -36,13 +42,34 @@ describe('Server interpreter logic', () => {
     expect(parseAndValidateAiResponse(raw).unidade).toBe('kg');
   });
 
-  it('extracts offer details with rule-based fallback', () => {
-    const text = 'Tenho 30 quilos de macaxeira para entregar até sexta na comunidade Val Paraíso.';
-    const result = interpretRuleBasedFallback(text, '2026-07-22');
+  it('calls the local Gemma model through Ollama', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        response: JSON.stringify({
+          produto: 'macaxeira',
+          quantidade: 30,
+          unidade: 'kg',
+          localidade: 'Comunidade Val Paraíso',
+          disponivelAte: '2026-07-06',
+          observacoes: null,
+        }),
+      }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await interpretWithOllama(
+      'Tenho 30 quilos de macaxeira para entregar até sexta na comunidade Val Paraíso.',
+      '2026-07-22',
+    );
+
     expect(result.produto).toBe('macaxeira');
-    expect(result.quantidade).toBe(30);
-    expect(result.unidade).toBe('kg');
-    expect(result.localidade).toBe('Comunidade Val Paraíso');
     expect(result.disponivelAte).toBe('2026-07-24');
+    expect(fetchMock).toHaveBeenCalledWith(
+      'http://127.0.0.1:11434/api/generate',
+      expect.objectContaining({ method: 'POST' }),
+    );
+    const request = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(request.model).toBe('gemma2:2b');
   });
 });

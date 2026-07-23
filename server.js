@@ -4,8 +4,6 @@ import { fileURLToPath } from 'url';
 import { createServer as createViteServer } from 'vite';
 import {
   AiError,
-  interpretRuleBasedFallback,
-  interpretWithGemini,
   interpretWithOllama,
 } from './server/interpreter.js';
 
@@ -60,22 +58,7 @@ async function startServer() {
     const trimmedText = texto.trim();
 
     try {
-      let result = null;
-
-      // 1. Gemini
-      if (process.env.GEMINI_API_KEY) {
-        result = await interpretWithGemini(trimmedText, dataReferencia);
-      }
-
-      // 2. Ollama
-      if (!result && process.env.OLLAMA_BASE_URL) {
-        result = await interpretWithOllama(trimmedText, dataReferencia);
-      }
-
-      // 3. Rule-based fallback
-      if (!result) {
-        result = interpretRuleBasedFallback(trimmedText, dataReferencia);
-      }
+      const result = await interpretWithOllama(trimmedText, dataReferencia);
 
       return res.status(200).json(result);
     } catch (err) {

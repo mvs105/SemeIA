@@ -67,13 +67,6 @@ function connectionLabel() {
     : '<span aria-hidden="true">○</span> Modo Offline — dados seguros localmente';
 }
 
-function nextFriday() {
-  const date = new Date();
-  const days = (5 - date.getDay() + 7) % 7;
-  date.setDate(date.getDate() + days);
-  return date.toISOString().slice(0, 10);
-}
-
 function layout(content) {
   const isOffline = !navigator.onLine;
   return `
@@ -99,15 +92,15 @@ function layout(content) {
     </button>
     <nav class="bottom-nav" aria-label="Navegação principal">
       ${navButton('home', '⌂', 'Início')}
-      ${navButton('lavoura', '⌁', 'Lavoura')}
+      ${navButton('roça', '⌁', 'Roça')}
       ${navButton('mercado', '↗', 'Mercado')}
       ${navButton('comunidade', '●●', 'Comunidade')}
     </nav>`;
 }
 
 function navButton(view, icon, label) {
-  const lavouraViews = ['lavoura', 'new', 'offers', 'lots'];
-  const active = state.view === view || (view === 'lavoura' && lavouraViews.includes(state.view));
+  const roçaViews = ['roça', 'new', 'offers', 'lots'];
+  const active = state.view === view || (view === 'roça' && roçaViews.includes(state.view));
   return `<button type="button" data-view="${view}" ${active ? 'aria-current="page"' : ''}><span aria-hidden="true">${icon}</span>${label}</button>`;
 }
 
@@ -135,16 +128,17 @@ function homeView() {
         <p class="eyebrow">Dica para vender melhor</p>
         <h2>Descreva sua produção do seu jeito</h2>
         <p>Diga o produto, a quantidade, o local e até quando pode entregar. A SemeIA organiza os campos e você confirma antes de salvar.</p>
+        <br>
         <button class="button button-sun" type="button" data-view="new">Registrar com a SemeIA <span aria-hidden="true">→</span></button>
       </div>
       <img src="/assets/semeia/icons/assistente-ia.png" alt="" />
     </section>
 
     <section class="quick-grid">
-      <div class="quick-card" data-view="lavoura">
+      <div class="quick-card" data-view="roça">
         <div class="quick-card-header">
           <img class="quick-icon" src="/assets/semeia/icons/cultivo.png" alt="" />
-          <h3>Minha Lavoura</h3>
+          <h3>Minha Roça</h3>
         </div>
         <p>Registre a produção e acompanhe suas ofertas e lotes.</p>
       </div>
@@ -171,34 +165,28 @@ function homeView() {
       </div>
     </section>
 
-    <section class="section-grid">
+    <section class="section-grid section-grid-single">
       <article class="panel">
         <div class="section-heading">
           <div><p class="eyebrow">Aparelho local</p><h2>Perfil do Produtor</h2></div>
           <img class="soft-icon" src="/assets/semeia/icons/producao.png" alt="" />
         </div>
         <form id="profile-form" class="compact-form">
-          <label>Seu nome<input name="nome" maxlength="80" value="${escapeHtml(state.profile?.nome)}" placeholder="Ex.: João Silva" required></label>
-          <label>Comunidade<input name="comunidade" maxlength="100" value="${escapeHtml(state.profile?.comunidade)}" placeholder="Ex.: Comunidade Val Paraíso" required></label>
+          <label>Seu nome<input name="nome" maxlength="80" value="${escapeHtml(state.profile?.nome)}" placeholder="Ex.: José Silva" required></label>
+          <label>Local<input name="local" maxlength="100" value="${escapeHtml(state.profile?.local)}" placeholder="Ex.: Local Val Paraíso" required></label>
           <label>Contato <span class="optional">opcional</span><input name="contato" maxlength="80" value="${escapeHtml(state.profile?.contato)}" placeholder="Telefone ou recado"></label>
           <button class="button button-secondary" type="submit">Salvar perfil</button>
         </form>
       </article>
-      <article class="panel panel-demo">
-        <p class="eyebrow">Roteiro do Hackathon</p>
-        <h2>Simulação Offline</h2>
-        <p>Carregue uma oferta de 20 kg de macaxeira. Em seguida, cadastre mais 30 kg para observar a formação automática de um lote de 50 kg.</p>
-        <button class="button button-quiet" type="button" data-demo>Preparar dados de teste</button>
-      </article>
     </section>`;
 }
 
-function lavouraView() {
+function roçaView() {
   const available = state.offers.filter((offer) => offer.status === 'disponivel').length;
   const lots = groupOffers(state.offers).length;
   return `
     <section class="page-intro page-intro-row">
-      <div><p class="eyebrow">Minha produção</p><h1>Minha Lavoura</h1><p>Registre o que colheu, acompanhe suas ofertas e participe de lotes coletivos.</p></div>
+      <div><p class="eyebrow">Minha produção</p><h1>Minha Roça</h1><p>Registre o que colheu, acompanhe suas ofertas e participe de lotes coletivos.</p></div>
       <button class="button button-primary" type="button" data-view="new">+ Nova oferta</button>
     </section>
     <section class="crop-overview">
@@ -209,14 +197,12 @@ function lavouraView() {
       <article class="portal-card"><img src="/assets/semeia/icons/producao.png" alt="" /><div><p class="eyebrow">Produção</p><h2>Cadastrar colheita</h2><p>Fale ou escreva uma oferta e revise os dados sugeridos pela IA.</p></div><button class="button button-primary" type="button" data-view="new">Cadastrar</button></article>
       <article class="portal-card"><img src="/assets/semeia/icons/cultivo.png" alt="" /><div><p class="eyebrow">No aparelho</p><h2>Minhas ofertas</h2><p>Consulte, edite ou encerre registros salvos localmente.</p></div><button class="button button-secondary" type="button" data-view="offers">Ver ofertas</button></article>
       <article class="portal-card"><img src="/assets/semeia/icons/comunidade.png" alt="" /><div><p class="eyebrow">Venda coletiva</p><h2>Lotes da comunidade</h2><p>Veja ofertas compatíveis agrupadas por produto, local e semana.</p></div><button class="button button-secondary" type="button" data-view="lots">Ver lotes</button></article>
-      <article class="portal-card portal-card-demo"><img src="/assets/semeia/icons/capacitacao.png" alt="" /><div><p class="eyebrow">Apresentação</p><h2>Preparar demonstração</h2><p>Carregue uma oferta fictícia para demonstrar a formação de um lote.</p></div><button class="button button-quiet" type="button" data-demo>Usar dados fictícios</button></article>
     </section>`;
 }
 
 function mercadoView() {
   return `
     <section class="page-intro"><p class="eyebrow">Mercado e oportunidades</p><h1>Venda com mais organização</h1><p>Esta área demonstra como oportunidades e referências de comercialização poderão aparecer no SemeIA.</p></section>
-    <div class="demo-notice"><strong>Conteúdo demonstrativo</strong><span>Valores e oportunidades abaixo são fictícios e não devem orientar uma venda real.</span></div>
     <section class="market-opportunity">
       <img src="/assets/semeia/icons/comercializacao.png" alt="" />
       <div><p class="eyebrow">Oportunidade da semana</p><h2>Feira da Economia Solidária</h2><p>Sábado, das 7h às 13h · exemplo para apresentação do protótipo.</p></div>
@@ -241,8 +227,7 @@ function marketRow(product, unit, price, icon) {
 function comunidadeView() {
   return `
     <section class="page-intro"><p class="eyebrow">Comunidade</p><h1>Ninguém produz sozinho</h1><p>Uma visão demonstrativa das trocas entre famílias produtoras, associações e cooperativas.</p></section>
-    <div class="demo-notice"><strong>Espaço demonstrativo</strong><span>Publicações e eventos são exemplos do protótipo.</span></div>
-    <section class="community-event"><img src="/assets/semeia/icons/comunidade.png" alt="" /><div><p class="eyebrow">Encontro fictício</p><h2>Roda de conversa sobre comercialização</h2><p>Sexta-feira, às 16h · Associação Nova Esperança.</p></div><button class="button button-primary" type="button" data-view="lavoura">Preparar minha oferta</button></section>
+    <section class="community-event"><img src="/assets/semeia/icons/comunidade.png" alt="" /><div><p class="eyebrow">Encontro fictício</p><h2>Roda de conversa sobre comercialização</h2><p>Sexta-feira, às 16h · Associação Semeia.</p></div><button class="button button-primary" type="button" data-view="roça">Preparar minha oferta</button></section>
     <section class="community-feed">
       <article class="community-post"><span class="member-avatar">MR</span><div><strong>Maria Ribeiro</strong><small>Produtora · exemplo</small><p>Tenho macaxeira disponível nesta semana. Quem mais vai entregar na sexta?</p><button class="button button-quiet" type="button" data-view="lots">Conferir lotes</button></div></article>
       <article class="community-post"><span class="member-avatar member-avatar-green">AP</span><div><strong>Associação do Panorama</strong><small>Cooperativa · exemplo</small><p>Estamos reunindo ofertas para completar o transporte coletivo.</p><button class="button button-quiet" type="button" data-view="offers">Ver minhas ofertas</button></div></article>
@@ -254,9 +239,9 @@ function aprenderView() {
     <section class="page-intro"><p class="eyebrow">Capacitação</p><h1>Conhecimento que ajuda a vender</h1><p>Conteúdos curtos para usar o SemeIA e organizar melhor suas ofertas.</p></section>
     <section class="learning-hero"><img src="/assets/semeia/icons/capacitacao.png" alt="" /><div><p class="eyebrow">Guia rápido</p><h2>Como criar uma oferta clara</h2><p>Aprenda quais informações ajudam a IA e os compradores a entender sua produção.</p></div><button class="button button-primary" type="button" data-view="guia">Começar</button></section>
     <section class="lesson-list">
-      <article><span>01</span><div><strong>Diga o nome do produto</strong><small>Exemplo: macaxeira, açaí ou farinha</small></div></article>
-      <article><span>02</span><div><strong>Informe quantidade e unidade</strong><small>Exemplo: 30 quilos ou 4 caixas</small></div></article>
-      <article><span>03</span><div><strong>Confirme local e prazo</strong><small>Revise tudo antes de salvar no aparelho</small></div></article>
+      <article><span>01</span><div><strong>Diga o nome do produto</strong><small><br />Exemplo: macaxeira, açaí ou farinha</small></div></article>
+      <article><span>02</span><div><strong>Informe quantidade e unidade</strong><small><br />Exemplo: 30 quilos ou 4 caixas</small></div></article>
+      <article><span>03</span><div><strong>Confirme local e prazo</strong><small><br />Revise tudo antes de salvar no aparelho</small></div></article>
     </section>`;
 }
 
@@ -362,7 +347,7 @@ function emptyState(title, text, view) {
 function render() {
   const views = {
     home: homeView,
-    lavoura: lavouraView,
+    roça: roçaView,
     mercado: mercadoView,
     comunidade: comunidadeView,
     aprender: aprenderView,
@@ -379,7 +364,6 @@ function bindEvents() {
   document.querySelectorAll('[data-view]').forEach((element) => element.addEventListener('click', () => navigate(element.dataset.view)));
   document.querySelector('[data-dismiss]')?.addEventListener('click', () => { state.message = null; render(); });
   document.querySelector('#profile-form')?.addEventListener('submit', saveProfile);
-  document.querySelectorAll('[data-demo]').forEach((el) => el.addEventListener('click', prepareDemo));
   document.querySelector('[data-interpret]')?.addEventListener('click', interpretText);
   document.querySelector('#offer-form')?.addEventListener('submit', saveOffer);
   document.querySelectorAll('[data-edit]').forEach((button) => button.addEventListener('click', () => editOffer(button.dataset.edit)));
@@ -441,22 +425,6 @@ async function saveProfile(event) {
   } catch {
     state.profile = data;
     state.message = { type: 'error', text: 'Não foi possível salvar o perfil. Tente novamente.' };
-  }
-  render();
-}
-
-async function prepareDemo() {
-  const date = nextFriday();
-  try {
-    await repository.prepareDemo({
-      id: 'oferta-demo-macaxeira', produtorId: 'produtor-demo', produto: 'Macaxeira', quantidade: 20, unidade: 'kg',
-      localidade: 'Comunidade Val Paraíso', disponivelAte: date, observacoes: 'Dado fictício para demonstração.',
-      status: 'disponivel', syncStatus: 'local', criadaEm: new Date().toISOString(), atualizadaEm: new Date().toISOString(),
-    });
-    await refresh();
-    state.message = { type: 'success', text: 'Demonstração preparada! Adicione mais 30 kg de macaxeira para formar um lote coletivo.' };
-  } catch {
-    state.message = { type: 'error', text: 'Não foi possível preparar os dados de teste neste aparelho.' };
   }
   render();
 }
