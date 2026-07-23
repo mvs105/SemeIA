@@ -82,7 +82,7 @@ function layout(content) {
       </a>
       <span class="connection ${navigator.onLine ? 'is-online' : 'is-offline'}" role="status">${connectionLabel()}</span>
     </header>
-    <main id="conteudo" tabindex="-1">
+    <main id="conteudo" tabindex="-1" style="display: flex; flex-direction: column; gap: 1.5rem;">
       ${state.message ? `<div class="toast toast-${state.message.type}" role="status">${escapeHtml(state.message.text)}<button type="button" data-dismiss aria-label="Fechar aviso">×</button></div>` : ''}
       ${content}
     </main>
@@ -112,10 +112,9 @@ function homeView() {
   return `
     <section class="hero">
       <div>
-        <p class="eyebrow">Conectando o saber tradicional à inteligência artificial</p>
         <h1>${firstName ? `Bom dia, ${firstName}!` : 'Bem-vindo ao SemeIA'}</h1>
         <p>Registre sua produção em linguagem natural, organize suas ofertas e forme lotes coletivos com outros produtores da sua comunidade.</p>
-        <button class="button button-primary button-large" type="button" data-view="new">Cadastrar nova oferta <span aria-hidden="true">→</span></button>
+        <button class="button button-primary button-large" type="button" data-view="new">Cadastrar nova oferta</button>
       </div>
       <div class="hero-summary" aria-label="Resumo das ofertas">
         <div><strong>${available}</strong><span>ofertas ativas</span></div>
@@ -123,15 +122,19 @@ function homeView() {
       </div>
     </section>
 
-    <section class="daily-highlight">
-      <div>
-        <p class="eyebrow">Dica para vender melhor</p>
-        <h2>Descreva sua produção do seu jeito</h2>
-        <p>Diga o produto, a quantidade, o local e até quando pode entregar. A SemeIA organiza os campos e você confirma antes de salvar.</p>
-        <br>
-        <button class="button button-sun" type="button" data-view="new">Registrar com a SemeIA <span aria-hidden="true">→</span></button>
-      </div>
-      <img src="/assets/semeia/icons/assistente-ia.png" alt="" />
+    <section class="section-grid section-grid-single">
+      <article class="panel">
+        <div class="section-heading">
+          <div><p class="eyebrow">Dispositivo local</p><h2>Perfil do Produtor</h2></div>
+          <img class="soft-icon" src="/assets/semeia/icons/producao.png" alt="" />
+        </div>
+        <form id="profile-form" class="compact-form">
+          <label>Seu nome<input name="nome" maxlength="80" value="${escapeHtml(state.profile?.nome)}" placeholder="Ex.: José Silva" required></label>
+          <label>Local<input name="local" maxlength="100" value="${escapeHtml(state.profile?.local)}" placeholder="Ex.: Local Val Paraíso" required></label>
+          <label>Contato <span class="optional">opcional</span><input name="contato" maxlength="80" value="${escapeHtml(state.profile?.contato)}" placeholder="Telefone ou recado"></label>
+          <button class="button button-secondary" type="submit">Salvar perfil</button>
+        </form>
+      </article>
     </section>
 
     <section class="quick-grid">
@@ -165,20 +168,16 @@ function homeView() {
       </div>
     </section>
 
-    <section class="section-grid section-grid-single">
-      <article class="panel">
-        <div class="section-heading">
-          <div><p class="eyebrow">Aparelho local</p><h2>Perfil do Produtor</h2></div>
-          <img class="soft-icon" src="/assets/semeia/icons/producao.png" alt="" />
-        </div>
-        <form id="profile-form" class="compact-form">
-          <label>Seu nome<input name="nome" maxlength="80" value="${escapeHtml(state.profile?.nome)}" placeholder="Ex.: José Silva" required></label>
-          <label>Local<input name="local" maxlength="100" value="${escapeHtml(state.profile?.local)}" placeholder="Ex.: Local Val Paraíso" required></label>
-          <label>Contato <span class="optional">opcional</span><input name="contato" maxlength="80" value="${escapeHtml(state.profile?.contato)}" placeholder="Telefone ou recado"></label>
-          <button class="button button-secondary" type="submit">Salvar perfil</button>
-        </form>
-      </article>
-    </section>`;
+    <section class="daily-highlight">
+      <div>
+        <p class="eyebrow">Dica para vender melhor</p>
+        <h2>Descreva sua produção do seu jeito</h2>
+        <p>Diga o produto, a quantidade, o local e até quando pode entregar. A SemeIA organiza os campos e você confirma antes de salvar.</p>
+        <br>
+        <button class="button button-sun" type="button" data-view="new">Registrar com a SemeIA <span aria-hidden="true">→</span></button>
+      </div>
+      <img src="/assets/semeia/icons/assistente-ia.png" alt="" />
+    </section>;`
 }
 
 function roçaView() {
@@ -315,7 +314,7 @@ function offersView() {
       <span aria-hidden="true">🔒</span>
       <div>
         <strong>Operação 100% Offline</strong>
-        <p>Seus registros ficam salvos com segurança no navegador através do IndexedDB/Dexie.</p>
+        <p>Seus registros ficam salvos com segurança no navegador.</p>
       </div>
     </div>
     <section class="card-list" aria-live="polite">
